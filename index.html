@@ -729,7 +729,7 @@ function openWishlist(){
     const el = document.getElementById("wishItems");
     const wishProds = allProducts.filter(p=>wishlist.includes(p.id));
     el.innerHTML = wishProds.length
-        ? wishProds.map(p=>`<div class="wish-item"><div><div class="wish-item-name">${p.emoji||'📦'} ${p.name}</div><div class="wish-item-price">$${p.price}</div></div><button class="wish-remove" onclick="removeWish('${p.id}')">✕</button></div>`).join("")
+        ? wishProds.map(p=>`<div class="wish-item"><div><div class="wish-item-name">${p.emoji||'📦'} ${p.name}</div><div class="wish-item-price">${p.price} جنية</div></div><button class="wish-remove" onclick="removeWish('${p.id}')">✕</button></div>`).join("")
         :'<div class="side-empty">WISHLIST IS EMPTY</div>';
     document.getElementById("wishSide").classList.add("open");
     document.getElementById("wishOvl").style.display="block";
@@ -754,8 +754,8 @@ function renderCartItems(){
     const el = document.getElementById("cartItems");
     if(!cart.length){el.innerHTML='<div class="side-empty">YOUR CART IS EMPTY</div>';document.getElementById("checkoutBtn").disabled=true;return;}
     document.getElementById("checkoutBtn").disabled=false;
-    el.innerHTML = cart.map(i=>`<div class="cart-item"><div class="cart-item-info"><div class="cart-item-name">${i.emoji} ${i.name}</div><div class="cart-item-price">$${(i.price*i.qty).toFixed(2)}</div></div><div class="cart-item-qty"><button class="qty-btn" onclick="changeQty('${i.id}',-1)">−</button><span class="qty-num">${i.qty}</span><button class="qty-btn" onclick="changeQty('${i.id}',1)">+</button></div></div>`).join("");
-    document.getElementById("cartTotal").textContent="$"+cart.reduce((s,i)=>s+i.price*i.qty,0).toFixed(2);
+    el.innerHTML = cart.map(i=>`<div class="cart-item"><div class="cart-item-info"><div class="cart-item-name">${i.emoji} ${i.name}</div><div class="cart-item-price">${(i.price*i.qty).toFixed(2)} جنية</div></div><div class="cart-item-qty"><button class="qty-btn" onclick="changeQty('${i.id}',-1)">−</button><span class="qty-num">${i.qty}</span><button class="qty-btn" onclick="changeQty('${i.id}',1)">+</button></div></div>`).join("");
+    document.getElementById("cartTotal").textContent=cart.reduce((s,i)=>s+i.price*i.qty,0).toFixed(2)+" جنية";
 }
 function changeQty(id,d){ const i=cart.find(x=>x.id===id);if(!i)return;i.qty+=d;if(i.qty<=0)cart=cart.filter(x=>x.id!==id);localStorage.setItem("cart",JSON.stringify(cart));updateCartCount();renderCartItems(); }
 
@@ -795,7 +795,7 @@ async function showMyOrders(){
         <div class="t-info">
             <div class="t-id">#${o.id.slice(0,8).toUpperCase()}</div>
             <div class="t-items">${Array.isArray(o.items)?o.items.map(i=>i.name+" x"+i.qty).join(", "):"—"}</div>
-            <div class="t-total">$${o.total_price||0} · ${o.created_at?o.created_at.slice(0,10):"—"}</div>
+            <div class="t-total">${o.total_price||0} جنية · ${o.created_at?o.created_at.slice(0,10):"—"}</div>
         </div>
         <span class="t-status st-${o.status||'pending'}">${si[o.status||'pending']||"⏳"} ${(o.status||"pending").toUpperCase()}</span>
     </div>`).join("");
@@ -812,7 +812,7 @@ function openDetail(pid){
     document.getElementById("detailContent").innerHTML=`
         ${p.image_url?`<img class="d-img" src="${p.image_url}" alt="${p.name}">`:`<div class="d-emoji">${p.emoji||'📦'}</div>`}
         <div class="d-name">${p.name}</div>
-        <div class="d-price">$${p.price}</div>
+       <div class="d-price">${p.price} جنية</div>
         <div class="star-row" style="justify-content:flex-start;margin-bottom:10px;">${renderStarDisp(rating)}<span class="star-count" style="margin-left:6px;">${rating?rating.toFixed(1):"No ratings yet"} (${getRevCount(pid)})</span></div>
         <div class="d-desc">${p.description||"Premium quality product from Revaldo Store."}</div>
         <div class="d-actions">
@@ -821,7 +821,7 @@ function openDetail(pid){
                 :`<a href="good.html" class="cart-btn">LOGIN TO ORDER</a>`}
             <button class="wish-btn ${wished?'wished':''}" onclick="toggleWish('${p.id}','${p.name.replace(/'/g,"\\'")}',${p.price},'${p.emoji||'📦'}');this.classList.toggle('wished')">♥</button>
         </div>
-        ${similar.length?`<div class="similar-sec"><div class="similar-ttl">// SIMILAR PRODUCTS</div><div class="similar-grid">${similar.map(s=>`<div class="sim-card" onclick="closeDetail();setTimeout(()=>openDetail('${s.id}'),50)"><div style="font-size:26px">${s.emoji||'📦'}</div><div class="sim-name">${s.name}</div><div class="sim-price">$${s.price}</div></div>`).join("")}</div></div>`:""}
+       ${similar.length?`<div class="similar-sec"><div class="similar-ttl">// SIMILAR PRODUCTS</div><div class="similar-grid">${similar.map(s=>`<div class="sim-card" onclick="closeDetail();setTimeout(()=>openDetail('${s.id}'),50)"><div style="font-size:26px">${s.emoji||'📦'}</div><div class="sim-name">${s.name}</div><div class="sim-price">${s.price} جنية</div></div>`).join("")}</div></div>`:""}
         <div class="reviews-sec">
             <div class="rev-ttl">// CUSTOMER REVIEWS</div>
             ${currentSession?`<div class="rev-form"><div class="rev-star-pick">${renderStarPick(pid,"rv")}</div><textarea id="rt-${pid}" placeholder="Share your experience..."></textarea><button class="rev-submit" onclick="submitReview('${pid}')">SUBMIT REVIEW</button></div>`:""}
